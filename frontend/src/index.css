@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #F7F6F3;
+    --surface: #FFFFFF;
+    --primary: #282A66;
+    --accent: #FF6B4A;
+    --border: #E6E3DD;
+    --text-primary: #1A1A1F;
+    --text-muted: #6B6B77;
+  }
+
+  body {
+    background-color: #F7F6F3;
+    color: #1A1A1F;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F7F6F3;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #D8D5CE;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #BEBBB3;
+  }
+}
+
+/* Hide scrollbar for horizontal product rails */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
