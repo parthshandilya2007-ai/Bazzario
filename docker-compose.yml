@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vervemarket_api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/vervemarket
+      - REDIS_URL=redis://redis:6379
+      - USE_REDIS=true
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:-vervemarket_jwt_access_secret_key_super_secure_32_chars!}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-vervemarket_jwt_refresh_secret_key_super_secure_32_chars!}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3000,http://localhost:5173}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - vervemarket_net
+
+  mongo:
+    image: mongo:7.0
+    container_name: vervemarket_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vervemarket_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: vervemarket_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vervemarket_net
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  vervemarket_net:
+    driver: bridge
